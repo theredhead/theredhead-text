@@ -73,7 +73,7 @@ export class Parser {
   offStart(callback: EmptyCallback): void {
     const index = this.startHandlers.indexOf(callback);
     if (index > -1) {
-      this.startHandlers.splice(index, -1);
+      this.startHandlers.splice(index, 1);
     }
   }
 
@@ -84,7 +84,7 @@ export class Parser {
   offDone(callback: EmptyCallback): void {
     const index = this.doneHandlers.indexOf(callback);
     if (index > -1) {
-      this.doneHandlers.splice(index, -1);
+      this.doneHandlers.splice(index, 1);
     }
   }
 

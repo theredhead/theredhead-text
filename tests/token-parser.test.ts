@@ -1,9 +1,9 @@
 /** @format */
 
-import { TokenParser } from "../src/token-parser";
+import { TokenParser } from "../src/index";
 
 describe("TokenParser", () => {
-  it("Breaks a sentence up into tokens", () => {
+  it("Breaks a sentence up into word tokens", () => {
     const text = "The quick brown fox jumps over the lazy dog.";
     const parser = new TokenParser();
     const result = parser.parse(text);
