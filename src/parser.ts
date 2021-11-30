@@ -6,12 +6,18 @@ export class Parser {
   private startHandlers: EmptyCallback[] = [];
   private doneHandlers: EmptyCallback[] = [];
 
+  private position: number = 0;
+  private text: string = "";
+
   parse(text: string) {
+    this.text = text;
+    this.position = 0;
     let line = 0;
     let column = 0;
     this.begin();
-    for (let ix = 0; ix < text.length; ix++) {
-      let character = text.charAt(ix);
+
+    while (this.position < text.length) {
+      let character = this.text.charAt(this.position);
       let charInfo: CharacterInfo = {
         line,
         column,
@@ -23,6 +29,7 @@ export class Parser {
         line++;
         column = 0;
       }
+      this.position++;
     }
     this.done();
   }

@@ -7,25 +7,27 @@ export class TokenParser {
   private tokens: Token[] = [];
   private token: Token = new Token();
 
+  private readonly handlers: TokenHandlerMap = {};
+
   constructor() {
     this.parser = new Parser();
 
     // whitespace
     this.parser.on([" ", "\t", "\n"], (_) => {
       if (this.token.length > 0) {
-        this.tokens.push(this.token);
+        this.tokenParsed(this.token);
         this.token = new Token();
       }
     });
     // single char seperators
     this.parser.on([",", ";"], (c) => {
       if (this.token.length > 0) {
-        this.tokens.push(this.token);
+        this.tokenParsed(this.token);
         this.token = new Token();
       }
       const token = new Token();
       token.append(c);
-      this.tokens.push(token);
+      this.tokenParsed(token);
     });
     this.parser.on("*", (c) => {
       switch (c.character) {
@@ -43,10 +45,37 @@ export class TokenParser {
     });
     this.parser.onDone(() => {
       if (this.token.length > 0) {
-        this.tokens.push(this.token);
+        this.tokenParsed(this.token);
         this.token = new Token();
       }
     });
+  }
+
+  on(token: string | string[], handler: TokenHandler) {
+    const words = Array.isArray(token) ? token : [token];
+    for (let word of words) {
+      const lowered = word.toLowerCase();
+      const handlers = this.handlers[lowered] ?? [];
+      handlers.push(handler);
+      this.handlers[word.toLowerCase()] = handlers;
+    }
+  }
+
+  tokenParsed(token: Token) {
+    this.tokens.push(token);
+
+    this.handle(token);
+  }
+
+  handle(token: Token) {
+    const lowered = token.toString().toLowerCase();
+    const handlers = [
+      ...(this.handlers[lowered] ?? []),
+      ...(this.handlers["*"] ?? []),
+    ];
+    for (let handler of handlers) {
+      handler(token);
+    }
   }
 
   parse(text: string): Token[] {
@@ -70,3 +99,6 @@ export class Token {
     return this.chars.length;
   }
 }
+
+export type TokenHandler = (token: Token) => void;
+export type TokenHandlerMap = { [key: string]: TokenHandler[] };
