@@ -96,4 +96,28 @@ describe("Parser", () => {
     parser.parse(text);
     expect(helpers.done).not.toHaveBeenCalled();
   });
+
+  it("removing onStart callbacks that don't exist throws", () => {
+    const parser = new Parser();
+    const helpers = {
+      start: () => {},
+    };
+    spyOn(helpers, "start");
+    parser.onDone(helpers.start);
+    expect(() => {
+      parser.offStart(() => {});
+    }).toThrow();
+  });
+
+  it("removing onDone callbacks that don't exist throws", () => {
+    const parser = new Parser();
+    const helpers = {
+      done: () => {},
+    };
+    spyOn(helpers, "done");
+    parser.onDone(helpers.done);
+    expect(() => {
+      parser.offDone(() => {});
+    }).toThrow();
+  });
 });

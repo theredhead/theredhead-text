@@ -74,7 +74,7 @@ export class Parser {
     const index = this.startHandlers.indexOf(callback);
     if (index > -1) {
       this.startHandlers.splice(index, 1);
-    }
+    } else throw new Error("Handler to be removed not found.");
   }
 
   onDone(callback: EmptyCallback): void {
@@ -85,7 +85,7 @@ export class Parser {
     const index = this.doneHandlers.indexOf(callback);
     if (index > -1) {
       this.doneHandlers.splice(index, 1);
-    }
+    } else throw new Error("Handler to be removed not found.");
   }
 
   handle(info: CharacterInfo): void {
